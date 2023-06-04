@@ -3,39 +3,44 @@ import  {useForm}  from '@mantine/form';
 import { Button, Group, Modal, TextInput, Textarea } from "@mantine/core";
 import { ENDPOINT, Todo } from "../App";
 import { KeyedMutator } from "swr";
+import axios from "axios";
 
 function AppendTodo({mutate}: {mutate : KeyedMutator<Todo[]>}) {
     const [open, setOpen] = useState(false);
+    const [response, setResponse] = useState();
+    let initialState: Todo = {
+        id: 0,
+        title: "",
+        completed: false,
+        description: ""
+    }
+    const [report, setReport] = useState<Todo>(initialState)
 
-    const form = useForm({
-        initialValues: {
-            title: "",
-            description:"",
-        },
-    })
+    const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        axios.post(`${ENDPOINT}/api/todos`, report).then((res) => {
+            setReport(res.data);
+            console.log(res.data);
+        }).catch(err => console.log("ERR", err));
+    }
 
-    async function createTodo(values: {title: string, description: string}) {
-        const updated = await fetch(`${ENDPOINT}/api/todos`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(values)
-        }).then((r) => r.json());
-
-        mutate(updated)
-        form.reset()
-        setOpen(false)
+    const onChangeHandler = (event: HTMLInputElement) => {
+        const {name, value} = event
+        setReport((prev) => {
+            return {...prev, [name]: value}
+        })
     }
 
     return (
         <>
-            <Modal opened={open} onClose={() => setOpen(false)} title="create new Todo">
-                <form onSubmit={form.onSubmit(createTodo)}>
-                    <TextInput required mb={12} label="Todo" placeholder="Aqui" {...form.getInputProps("title")}/>
-                    <Textarea  required mb={12} label="Description" placeholder="Aqui" {...form.getInputProps("description")}/>
+            <Modal opened={open} onClose={() => setOpen(false)} title="Create new Report!">
+                <form onSubmit={submitForm}>
+                    <label>Title</label>
+                    <input className="form-control" name="title" value={report.title} onChange={(e) => onChangeHandler(e.target)}/>
+                    <label>Description</label>
+                    <input className="form-control" name="description" value={report.description} onChange={(e) => onChangeHandler(e.target)}/>
 
-                    <Button type="submit">Create</Button>
+                    <button type="submit" className="btn btn-primary mt-2">Create</button>
                 </form>
             </Modal>        
             <Group position="center">

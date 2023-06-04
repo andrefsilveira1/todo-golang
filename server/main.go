@@ -12,7 +12,7 @@ import (
 type Todo struct {
 	ID          int    `json:"id"`
 	Title       string `json:"title"`
-	Completed   bool   `json:"done"`
+	Completed   bool   `json:"completed"`
 	Description string `json:"description"`
 }
 
@@ -22,7 +22,7 @@ func main() {
 	app := fiber.New()
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "http://localhost:5173",
-		AllowHeaders: "Origin, Content-Tpye, Accept",
+		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
 	todos := []Todo{}
@@ -57,6 +57,20 @@ func main() {
 		for i, t := range todos {
 			if t.ID == id {
 				todos[i].Completed = true
+				break
+			}
+		}
+		return c.JSON(todos)
+	})
+
+	app.Patch("/api/todos/:id/uncompleted", func(c *fiber.Ctx) error {
+		id, err := c.ParamsInt("id")
+		if err != nil {
+			return c.Status(401).SendString("INVALID ID")
+		}
+		for i, t := range todos {
+			if t.ID == id {
+				todos[i].Completed = false
 				break
 			}
 		}

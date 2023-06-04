@@ -1,8 +1,10 @@
-import { Box, List, ThemeIcon } from '@mantine/core'
 import './App.css'
-import  useSWR  from 'swr';
+import { mutate }  from 'swr';
 import AppendTodo from './components/AppendTodo';
-import { CheckCircleFillIcon } from '@primer/octicons-react';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { CheckCircleFillIcon, CircleIcon } from '@primer/octicons-react';
 
 export interface Todo {
   id: number
@@ -13,42 +15,53 @@ export interface Todo {
 
 export const ENDPOINT = "http://localhost:8000";
 
-const fetcher = (url:string) => fetch(`${ENDPOINT}/${url}`).then((r) => r.json());
-
 function App() {
-  const { data, mutate } = useSWR<Todo[]>('api/todos', fetcher)
-
+  const [reports, setReports] = useState([]);
+  
+  useEffect(() => {
+    axios.get(`${ENDPOINT}/api/todos`).then(res => {
+      setReports(res.data)
+    }).catch(err => console.log("error: ", err))
+  }), [reports];
+  
   async function completeTodo(id: number) {
-    const updated = await fetch(`${ENDPOINT}/api/todos/${id}/completed`, {
-      method: "PATCH",
-
-    }).then((r) => r.json());
-    mutate(updated);
+    await axios.patch(`${ENDPOINT}/api/todos/${id}/completed`).then(res => {
+      setReports(res.data)
+    }).catch(err => console.log(err));
   }
+
+  async function undoTodo(id: number) {
+    await axios.patch(`${ENDPOINT}/api/todos/${id}/uncompleted`).then(res => {
+      setReports(res.data)
+    }).catch(err => console.log("ERR:", err));
+  }
+
   return (
     <>
-    <Box
-      sx={(theme) => ({
-        padding: "2rem",
-        width: "100%",
-        maxWidth: "40rem",
-        margin: "0 auto"
-      })}
-    >
-      <List spacing="xs" size="sm" mb={12} center >
-        {data?.map ((todo) => {
-          return (
-            <List.Item key={`todo_${todo.id}`} onClick={() => completeTodo(todo.id)}>
-            icon={
-              todo.completed ? (<ThemeIcon color='teal' size={24} radius="xl"> <CheckCircleFillIcon size={20}/></ThemeIcon>) : (<ThemeIcon color='gray' size={24} radius="xl"> <CheckCircleFillIcon size={20}/></ThemeIcon>)
-            }
-              {todo.title}
-            </List.Item>
-          )
-        })}      
-      </List>
+           <table className='table table-striped table-dark'>
+            <thead>
+           <tr>
+             <th>Id</th>
+             <th>Title</th>
+             <th>Description</th>
+             <th>Completed</th>
+           </tr>
+            </thead>
+            <tbody>
+            {reports?.map ((todo:Todo) => {
+              return (
+                <tr key={todo.id}>
+                  <td>{todo.id}</td>
+                  <td>{todo.title}</td>
+                  <td>{todo.description}</td>
+                  {todo.completed === true ? (<td onClick={() => undoTodo(todo.id)}><CheckCircleFillIcon/></td>) : (<td onClick={() => completeTodo(todo.id)}> <CircleIcon/></td>)}
+                </tr>
+              )
+            })}      
+            </tbody>
+         </table> 
+
       <AppendTodo mutate={mutate}/>
-    </Box>
     </>
   )
 }
