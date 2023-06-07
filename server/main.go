@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"main/config"
 
 	"github.com/andrefsilveira1/LoadEnv"
 	"github.com/gofiber/fiber/v2"
@@ -28,6 +29,7 @@ func main() {
 	todos := []Todo{}
 
 	app.Get("/health", func(c *fiber.Ctx) error {
+		config.Config()
 		return c.SendString("status: OK")
 	})
 
