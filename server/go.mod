@@ -2,7 +2,6 @@ module main
 
 go 1.20
 
-require github.com/gocql/gocql v1.4.0
 
 require (
 	go.uber.org/atomic v1.7.0 // indirect
@@ -12,6 +11,7 @@ require (
 require (
 	github.com/andrefsilveira1/LoadEnv v1.0.3 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
+	github.com/go-sql-driver/mysql v1.7.1
 	github.com/gofiber/fiber/v2 v2.46.0 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/uuid v1.3.0 // indirect

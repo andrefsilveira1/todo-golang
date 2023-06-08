@@ -4,18 +4,13 @@ import (
 	"fmt"
 	"log"
 	"main/config"
+	"main/db"
+	"main/repositories"
 
 	"github.com/andrefsilveira1/LoadEnv"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
-
-type Todo struct {
-	ID          int    `json:"id"`
-	Title       string `json:"title"`
-	Completed   bool   `json:"completed"`
-	Description string `json:"description"`
-}
 
 func main() {
 	fmt.Println("Server started!")
@@ -26,58 +21,67 @@ func main() {
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
-	todos := []Todo{}
-
 	app.Get("/health", func(c *fiber.Ctx) error {
 		config.Config()
-		return c.SendString("status: OK")
-	})
-
-	app.Get("/api/todos", func(c *fiber.Ctx) error {
-		return c.JSON(todos)
-	})
-
-	app.Post("/api/todos", func(c *fiber.Ctx) error {
-		todo := &Todo{}
-
-		if err := c.BodyParser(todo); err != nil {
-			return err
+		db, erro := db.Connect()
+		if erro != nil {
+			panic(erro)
 		}
+		defer db.Close()
 
-		todo.ID = len(todos) + 1
-		todos = append(todos, *todo)
-
-		return c.JSON(todo)
-	})
-
-	app.Patch("/api/todos/:id/completed", func(c *fiber.Ctx) error {
-		id, err := c.ParamsInt("id")
+		repositorie := repositories.NewRepository(db)
+		datas, err := repositorie.FindAll("")
 		if err != nil {
-			return c.Status(401).SendString("Invalid ID:")
+			panic(err)
 		}
-
-		for i, t := range todos {
-			if t.ID == id {
-				todos[i].Completed = true
-				break
-			}
-		}
-		return c.JSON(todos)
+		return c.JSON(datas)
 	})
 
-	app.Patch("/api/todos/:id/uncompleted", func(c *fiber.Ctx) error {
-		id, err := c.ParamsInt("id")
-		if err != nil {
-			return c.Status(401).SendString("INVALID ID")
-		}
-		for i, t := range todos {
-			if t.ID == id {
-				todos[i].Completed = false
-				break
-			}
-		}
-		return c.JSON(todos)
-	})
+	// app.Get("/api/todos", func(c *fiber.Ctx) error {
+	// 	return c.JSON(todos)
+	// })
+
+	// app.Post("/api/todos", func(c *fiber.Ctx) error {
+	// 	todo := &Todo{}
+
+	// 	if err := c.BodyParser(todo); err != nil {
+	// 		return err
+	// 	}
+
+	// 	todo.ID = len(todos) + 1
+	// 	todos = append(todos, *todo)
+
+	// 	return c.JSON(todo)
+	// })
+
+	// app.Patch("/api/todos/:id/completed", func(c *fiber.Ctx) error {
+	// 	id, err := c.ParamsInt("id")
+	// 	if err != nil {
+	// 		return c.Status(401).SendString("Invalid ID:")
+	// 	}
+
+	// 	for i, t := range todos {
+	// 		if t.ID == id {
+	// 			todos[i].Completed = true
+	// 			break
+	// 		}
+	// 	}
+	// 	return c.JSON(todos)
+	// })
+
+	// app.Patch("/api/todos/:id/uncompleted", func(c *fiber.Ctx) error {
+	// 	id, err := c.ParamsInt("id")
+	// 	if err != nil {
+	// 		return c.Status(401).SendString("INVALID ID")
+	// 	}
+	// 	for i, t := range todos {
+	// 		if t.ID == id {
+	// 			todos[i].Completed = false
+	// 			break
+	// 		}
+	// 	}
+	// 	return c.JSON(todos)
+	// })
 
 	port := LoadEnv.LoadEnv("API_PORT")
 	fmt.Println("Listening on Port:", port)

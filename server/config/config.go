@@ -1,23 +1,38 @@
 package config
 
 import (
-	"main/scylla"
+	"fmt"
+	"log"
+	"strconv"
 
-	"github.com/gocql/gocql"
-	"go.uber.org/zap"
+	"github.com/andrefsilveira1/LoadEnv"
 )
 
-func Config() {
-	logger := scylla.CreateLogger("info")
-	cluster := scylla.CreateCluster(gocql.Quorum, "catalog", "scylla-node1")
-	session, err := gocql.NewSession(*cluster)
-	if err != nil {
-		logger.Fatal("Unable to connect to Scylla", zap.Error(err))
+// This variables will be exported and used by Mysql connection
+var (
+	stringConnection = ""
+	Port             = 0
+)
+
+func Config() string {
+	var erro error
+	Port, erro = strconv.Atoi(LoadEnv.LoadEnv("DB_PORT"))
+	if erro != nil {
+		log.Fatal("Something goes wrong...", erro)
 	}
-	defer session.Close()
-	scylla.SelectQuery(session, logger)
-	scylla.InsertQuery(session, logger)
-	scylla.SelectQuery(session, logger)
-	scylla.DeleteQuery(session, logger)
-	scylla.SelectQuery(session, logger)
+
+	user := LoadEnv.LoadEnv("DB_USER")
+	password := LoadEnv.LoadEnv("DB_PASS")
+	name := LoadEnv.LoadEnv("DB_NAME")
+	fmt.Println("Using port:", Port)
+	fmt.Println("Using user:", user)
+	fmt.Println("Using password:", password)
+	fmt.Println("Using name:", name)
+	stringConnection = fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local",
+		user,
+		password,
+		name,
+	)
+	fmt.Println("string:", stringConnection)
+	return stringConnection
 }
