@@ -6,6 +6,7 @@ import (
 	"main/config"
 	"main/db"
 	"main/repositories"
+	"main/routes"
 
 	"github.com/andrefsilveira1/LoadEnv"
 	"github.com/gofiber/fiber/v2"
@@ -20,6 +21,8 @@ func main() {
 		AllowOrigins: "http://localhost:5173",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
+
+	routes.Setup(app)
 
 	app.Get("/health", func(c *fiber.Ctx) error {
 		config.Config()
