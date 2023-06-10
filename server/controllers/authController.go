@@ -5,10 +5,15 @@ import (
 	"main/db"
 	"main/models"
 	"main/repositories"
+	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
+
+const SecretKey = "secret"
 
 func Register(c *fiber.Ctx) error {
 	var data map[string]string
@@ -16,7 +21,6 @@ func Register(c *fiber.Ctx) error {
 	if err := c.BodyParser(&data); err != nil {
 		return err
 	}
-
 	passwd, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), bcrypt.DefaultCost)
 
 	user := models.User{
@@ -66,8 +70,7 @@ func Login(c *fiber.Ctx) error {
 			"message": "user not found",
 		})
 	}
-	passwd, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
-	fmt.Println("Crpy:", passwd)
+
 	if err := bcrypt.CompareHashAndPassword(result.Password, []byte(data["password"])); err != nil {
 		c.Status(fiber.StatusBadRequest)
 		fmt.Println("error:", err)
@@ -76,6 +79,29 @@ func Login(c *fiber.Ctx) error {
 		})
 
 	}
-	return c.JSON(result)
+
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:    strconv.Itoa(int(result.Id)),
+		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+	})
+
+	token, err := claims.SignedString([]byte(SecretKey))
+	if err != nil {
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"message": "login invalid",
+		})
+	}
+	cookie := fiber.Cookie{
+		Name:     "jwt",
+		Value:    token,
+		Expires:  time.Now().Add(time.Hour * 24),
+		HTTPOnly: true,
+	}
+
+	c.Cookie(&cookie)
+	return c.JSON(fiber.Map{
+		"message": "success",
+	})
 
 }
