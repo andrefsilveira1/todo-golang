@@ -105,3 +105,46 @@ func Login(c *fiber.Ctx) error {
 	})
 
 }
+
+func User(c *fiber.Ctx) error {
+	cookie := c.Cookies("jwt")
+
+	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) {
+		return []byte(SecretKey), nil
+	})
+
+	if err != nil {
+		c.Status(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{
+			"message": "unauthenticated",
+		})
+	}
+
+	claims := token.Claims.(*jwt.StandardClaims)
+	db, erro := db.Connect()
+	if erro != nil {
+		panic(erro)
+	}
+	defer db.Close()
+
+	repositorie := repositories.NewRepository(db)
+	result, err := repositorie.User(claims.Issuer)
+
+	return c.JSON(result)
+
+}
+
+func Logout(c *fiber.Ctx) error {
+	cookie := fiber.Cookie{
+		Name:     "jwt",
+		Value:    "",
+		Expires:  time.Now().Add(-time.Hour),
+		HTTPOnly: true,
+	}
+
+	c.Cookie(&cookie)
+
+	return c.JSON(fiber.Map{
+		"message": "Logout successful",
+	})
+}

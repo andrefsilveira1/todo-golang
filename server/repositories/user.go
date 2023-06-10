@@ -40,3 +40,25 @@ func (d data) Login(user models.User) (models.User, error) {
 
 	return localuser, nil
 }
+
+func (d data) User(claims string) (models.User, error) {
+	statement, err := d.db.Query("SELECT * FROM users WHERE id = ?", claims)
+	if err != nil {
+		return models.User{}, err
+	}
+	defer statement.Close()
+	var localuser models.User
+	if statement.Next() {
+		if err = statement.Scan(
+			&localuser.Id,
+			&localuser.Name,
+			&localuser.Email,
+			&localuser.Password,
+			&localuser.CreatedAt,
+		); err != nil {
+			return models.User{}, err
+		}
+	}
+
+	return localuser, nil
+}
