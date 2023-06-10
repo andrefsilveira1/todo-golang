@@ -1,6 +1,8 @@
 package repositories
 
-import "main/models"
+import (
+	"main/models"
+)
 
 func (d data) CreateUser(user models.User) (uint64, error) {
 	statement, err := d.db.Prepare("INSERT INTO users (name, email, password) VALUES(?,?,?)")
@@ -20,4 +22,21 @@ func (d data) CreateUser(user models.User) (uint64, error) {
 	}
 
 	return uint64(id), nil
+}
+
+func (d data) Login(user models.User) (models.User, error) {
+	statement, err := d.db.Query("SELECT id,password FROM users WHERE email = ?", user.Email)
+	if err != nil {
+		return models.User{}, err
+	}
+	defer statement.Close()
+
+	var localuser models.User
+	if statement.Next() {
+		if err = statement.Scan(&localuser.Id, &localuser.Password); err != nil {
+			return models.User{}, err
+		}
+	}
+
+	return localuser, nil
 }
