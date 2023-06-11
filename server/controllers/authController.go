@@ -28,7 +28,7 @@ func Register(c *fiber.Ctx) error {
 		Email:    data["email"],
 		Password: passwd,
 	}
-
+	fmt.Println("RECEIVED:", user)
 	db, erro := db.Connect()
 	if erro != nil {
 		panic(erro)
