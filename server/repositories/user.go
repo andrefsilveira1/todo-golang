@@ -5,7 +5,7 @@ import (
 )
 
 func (d data) CreateUser(user models.User) (uint64, error) {
-	statement, err := d.db.Prepare("INSERT INTO users (name, email, password) VALUES(?,?,?)")
+	statement, err := d.db.Prepare("INSERT INTO users (name, email,password) VALUES(?,?,?)")
 	if err != nil {
 		return 0, err
 	}

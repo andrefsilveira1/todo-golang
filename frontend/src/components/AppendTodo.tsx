@@ -1,13 +1,11 @@
 import { useState } from "react";
-import  {useForm}  from '@mantine/form';
-import { Button, Group, Modal, TextInput, Textarea } from "@mantine/core";
+import { Button, Group, Modal } from "@mantine/core";
 import { ENDPOINT, Todo } from "../App";
 import { KeyedMutator } from "swr";
 import axios from "axios";
 
 function AppendTodo({mutate}: {mutate : KeyedMutator<Todo[]>}) {
     const [open, setOpen] = useState(false);
-    const [response, setResponse] = useState();
     let initialState: Todo = {
         id: 0,
         title: "",

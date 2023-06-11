@@ -1,10 +1,11 @@
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
-import { mutate }  from 'swr';
-import AppendTodo from './components/AppendTodo';
-import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { CheckCircleFillIcon, CircleIcon } from '@primer/octicons-react';
+import Nav from './components/navbar'
+import Login from './components/login'
+import Home from './pages/home'
+export const ENDPOINT = "http://localhost:8000";
+import 'bootstrap/dist/css/bootstrap.css';
+import Register from './pages/register/Register'
 
 export interface Todo {
   id: number
@@ -12,56 +13,19 @@ export interface Todo {
   completed: boolean
   description: string
 }
-
-export const ENDPOINT = "http://localhost:8000";
-
 function App() {
-  const [reports, setReports] = useState([]);
   
-  useEffect(() => {
-    axios.get(`${ENDPOINT}/api/todos`).then(res => {
-      setReports(res.data)
-    }).catch(err => console.log("error: ", err))
-  }), [reports];
-  
-  async function completeTodo(id: number) {
-    await axios.patch(`${ENDPOINT}/api/todos/${id}/completed`).then(res => {
-      setReports(res.data)
-    }).catch(err => console.log(err));
-  }
-
-  async function undoTodo(id: number) {
-    await axios.patch(`${ENDPOINT}/api/todos/${id}/uncompleted`).then(res => {
-      setReports(res.data)
-    }).catch(err => console.log("ERR:", err));
-  }
 
   return (
     <>
-           <table className='table table-striped table-dark'>
-            <thead>
-           <tr>
-             <th>Id</th>
-             <th>Title</th>
-             <th>Description</th>
-             <th>Completed</th>
-           </tr>
-            </thead>
-            <tbody>
-            {reports?.map ((todo:Todo) => {
-              return (
-                <tr key={todo.id}>
-                  <td>{todo.id}</td>
-                  <td>{todo.title}</td>
-                  <td>{todo.description}</td>
-                  {todo.completed === true ? (<td onClick={() => undoTodo(todo.id)}><CheckCircleFillIcon/></td>) : (<td onClick={() => completeTodo(todo.id)}> <CircleIcon/></td>)}
-                </tr>
-              )
-            })}      
-            </tbody>
-         </table> 
-
-      <AppendTodo mutate={mutate}/>
+      <BrowserRouter>
+      <Nav/>
+        <Routes>
+          <Route path="/login" Component={Login} />
+          <Route path="/register" Component={Register} />
+          <Route path="/home" Component={Home} />
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
