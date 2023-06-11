@@ -25,7 +25,7 @@ func (d data) CreateUser(user models.User) (uint64, error) {
 }
 
 func (d data) Login(user models.User) (models.User, error) {
-	statement, err := d.db.Query("SELECT id,password FROM users WHERE email = ?", user.Email)
+	statement, err := d.db.Query("SELECT id, name, password FROM users WHERE email = ?", user.Email)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -33,7 +33,7 @@ func (d data) Login(user models.User) (models.User, error) {
 
 	var localuser models.User
 	if statement.Next() {
-		if err = statement.Scan(&localuser.Id, &localuser.Password); err != nil {
+		if err = statement.Scan(&localuser.Id, &localuser.Name, &localuser.Password); err != nil {
 			return models.User{}, err
 		}
 	}

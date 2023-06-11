@@ -6,6 +6,7 @@ import Home from './pages/home'
 export const ENDPOINT = "http://localhost:8000";
 import 'bootstrap/dist/css/bootstrap.css';
 import Register from './pages/register/Register'
+import { useEffect, useState } from 'react'
 
 export interface Todo {
   id: number
@@ -14,16 +15,30 @@ export interface Todo {
   description: string
 }
 function App() {
+
+  const [name, setName] = useState('');
+  useEffect(() => {
+    (
+      async () => {
+        const res = await fetch(`${ENDPOINT}/api/user`, {
+          headers: {'Content-Type': 'application/json'},
+          credentials: 'include',
+      });
+        const result = await res.json();
+        setName(result.name);
+      }
+    )();
+  });
   
 
   return (
     <>
       <BrowserRouter>
-      <Nav/>
+      <Nav name={name} setName={setName}/>
         <Routes>
-          <Route path="/login" Component={Login} />
+          <Route path="/login" Component={() => <Login setName={setName}/>} />
           <Route path="/register" Component={Register} />
-          <Route path="/home" Component={Home} />
+          <Route path="/home" Component={() => <Home name={name}/>} />
         </Routes>
       </BrowserRouter>
     </>
