@@ -15,7 +15,8 @@ export interface Todo {
 export const ENDPOINT = "http://localhost:8000";
 
     
-export default function Home() {
+export default function Home(props: {name: string}) {
+
     const [reports, setReports] = useState([]);
     
     useEffect(() => {
@@ -37,6 +38,7 @@ export default function Home() {
     }
     return (
             <>
+            <h1 className='text-light'>{props.name ? "Welcome, " + props.name + '!': 'You are not authorized'}</h1>
             <table className='table table-striped table-dark'>
                         <thead>
                     <tr>
