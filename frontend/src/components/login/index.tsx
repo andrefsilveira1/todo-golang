@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom"
-import "./index.css"
+import "../../pages/register/index.css"
 import { SyntheticEvent, useState } from "react"
 import { ENDPOINT } from "../../App";
 export default function Login(props: {setName: (name:string) => void}) {
