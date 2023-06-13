@@ -21,7 +21,6 @@ export default function Login(props: {setName: (name:string) => void}) {
             })
         })
         const result = await res.json();
-        console.log("RESULT:", result)
         props.setName(result.name)
         return navigate("/home");
     }
