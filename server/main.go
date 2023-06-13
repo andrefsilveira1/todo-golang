@@ -34,7 +34,7 @@ func main() {
 		defer db.Close()
 
 		repositorie := repositories.NewRepository(db)
-		datas, err := repositorie.FindAll("")
+		datas, err := repositorie.FindAll()
 		if err != nil {
 			panic(err)
 		}
