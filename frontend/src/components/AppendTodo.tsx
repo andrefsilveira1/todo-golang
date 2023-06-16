@@ -1,43 +1,36 @@
-import { useState } from "react";
+import { useState, SyntheticEvent } from "react";
 import { Button, Group, Modal } from "@mantine/core";
-import { ENDPOINT, Todo } from "../App";
-import { KeyedMutator } from "swr";
-import axios from "axios";
+import { ENDPOINT } from "../App";
 
-function AppendTodo({mutate}: {mutate : KeyedMutator<Todo[]>}) {
+function AppendTodo() {
     const [open, setOpen] = useState(false);
-    let initialState: Todo = {
-        id: 0,
-        title: "",
-        completed: false,
-        description: ""
-    }
-    const [report, setReport] = useState<Todo>(initialState)
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [completed, setCompleted] = useState("false");
 
-    const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        axios.post(`${ENDPOINT}/api/todos`, report).then((res) => {
-            setReport(res.data);
-            console.log(res.data);
-        }).catch(err => console.log("ERR", err));
-    }
-
-    const onChangeHandler = (event: HTMLInputElement) => {
-        const {name, value} = event
-        setReport((prev) => {
-            return {...prev, [name]: value}
+    async function handleSubmit(e: SyntheticEvent) {
+        e.preventDefault();
+        const res = await fetch(`${ENDPOINT}/api/data/create`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                title,
+                description,
+                completed,
+            })
         })
+        console.log("RECEIVED:", res)
+
     }
 
     return (
         <>
             <Modal opened={open} onClose={() => setOpen(false)} title="Create new Report!">
-                <form onSubmit={submitForm}>
+                <form onSubmit={handleSubmit}>
                     <label>Title</label>
-                    <input className="form-control" name="title" value={report.title} onChange={(e) => onChangeHandler(e.target)}/>
+                    <input className="form-control" name="title" value={title} onChange={(e) => setTitle(e.target.value)}/>
                     <label>Description</label>
-                    <input className="form-control" name="description" value={report.description} onChange={(e) => onChangeHandler(e.target)}/>
-
+                    <input className="form-control" name="description" value={description} onChange={(e) => setDescription(e.target.value)}/>
                     <button type="submit" className="btn btn-primary mt-2">Create</button>
                 </form>
             </Modal>        

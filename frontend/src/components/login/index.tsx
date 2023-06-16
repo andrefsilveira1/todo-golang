@@ -29,7 +29,6 @@ export default function Login(props: {setName: (name:string) => void}) {
         } else {
             setError("Invalid login")
         }
-        console.log("RESULT:", result)
     }
     return(
         <>
