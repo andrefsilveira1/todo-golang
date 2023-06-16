@@ -8,6 +8,8 @@ export default function Login(props: {setName: (name:string) => void}) {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+
 
     async function handleSubmit(e: SyntheticEvent) {
         e.preventDefault();
@@ -21,22 +23,26 @@ export default function Login(props: {setName: (name:string) => void}) {
             })
         })
         const result = await res.json();
-        props.setName(result.name)
-        return navigate("/home");
+        if(result.name) {
+            props.setName(result.name)
+            return navigate("/home");
+        } else {
+            setError("Invalid login")
+        }
+        console.log("RESULT:", result)
     }
     return(
         <>
         <div className="wrapper fadeInDown">
             <div id="formContent">
-
-                <div className="fadeIn first">
-                </div>
-
                 <form onSubmit={handleSubmit}>
                     <input type="text" id="email" className="fadeIn second" onChange={e => setEmail(e.target.value)} name="email" placeholder="email"/>
                     <input type="text" id="password" className="fadeIn third" name="password" onChange={e => setPassword(e.target.value)} placeholder="Password"/>
                     <input type="submit" className="fadeIn fourth" value="Log In"/>
                 </form>
+                <div className="text-danger">
+                    <h4>{error}</h4>
+                </div>
                 <div id="formFooter">
                 <Link to="/register" className="underlineHover">Don’t have an account? ?</Link>
                 </div>
