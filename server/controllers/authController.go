@@ -30,7 +30,7 @@ func Register(c *fiber.Ctx) error {
 	}
 	db, erro := db.Connect()
 	if erro != nil {
-		panic(erro)
+		return c.JSON(erro)
 	}
 	defer db.Close()
 
@@ -38,7 +38,7 @@ func Register(c *fiber.Ctx) error {
 
 	result, err := repositorie.CreateUser(user)
 	if err != nil {
-		panic(err)
+		return c.JSON(err)
 	}
 
 	return c.JSON(result)
@@ -53,7 +53,7 @@ func Login(c *fiber.Ctx) error {
 
 	db, erro := db.Connect()
 	if erro != nil {
-		panic(erro)
+		return c.JSON(erro)
 	}
 	defer db.Close()
 
@@ -120,7 +120,7 @@ func User(c *fiber.Ctx) error {
 	claims := token.Claims.(*jwt.StandardClaims)
 	db, erro := db.Connect()
 	if erro != nil {
-		panic(erro)
+		return c.JSON(erro)
 	}
 	defer db.Close()
 

@@ -24,14 +24,14 @@ func CreateData(c *fiber.Ctx) error {
 
 	db, erro := db.Connect()
 	if erro != nil {
-		panic(erro)
+		return c.JSON(erro)
 	}
 	defer db.Close()
 
 	repositorie := repositories.NewRepository(db)
 	result, err := repositorie.CreateData(localData)
 	if err != nil {
-		panic(err)
+		return c.JSON(err)
 	}
 
 	return c.JSON(result)
@@ -40,14 +40,14 @@ func CreateData(c *fiber.Ctx) error {
 func GetData(c *fiber.Ctx) error {
 	db, erro := db.Connect()
 	if erro != nil {
-		panic(erro)
+		return c.JSON(erro)
 	}
 	defer db.Close()
 
 	repositorie := repositories.NewRepository(db)
 	result, err := repositorie.FindAll()
 	if err != nil {
-		panic(err)
+		return c.JSON(err)
 	}
 
 	return c.JSON(result)
@@ -62,14 +62,14 @@ func CompleteTask(c *fiber.Ctx) error {
 
 	db, erro := db.Connect()
 	if erro != nil {
-		panic(erro)
+		return c.JSON(erro)
 	}
 	defer db.Close()
 
 	repositorie := repositories.NewRepository(db)
 	result, err := repositorie.CompleteTask(id)
 	if err != nil {
-		panic(err)
+		return c.JSON(err)
 	}
 
 	return c.JSON(result)
@@ -85,14 +85,14 @@ func UndoTask(c *fiber.Ctx) error {
 
 	db, erro := db.Connect()
 	if erro != nil {
-		panic(erro)
+		return c.JSON(erro)
 	}
 	defer db.Close()
 
 	repositorie := repositories.NewRepository(db)
 	result, err := repositorie.UndoTask(id)
 	if err != nil {
-		panic(err)
+		return c.JSON(err)
 	}
 
 	return c.JSON(result)

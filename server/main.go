@@ -29,14 +29,14 @@ func main() {
 		config.Config()
 		db, erro := db.Connect()
 		if erro != nil {
-			panic(erro)
+			return c.JSON(erro)
 		}
 		defer db.Close()
 
 		repositorie := repositories.NewRepository(db)
 		datas, err := repositorie.FindAll()
 		if err != nil {
-			panic(err)
+			return c.JSON(erro)
 		}
 		return c.JSON(datas)
 	})
