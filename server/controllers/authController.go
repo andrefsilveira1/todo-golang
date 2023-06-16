@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"main/db"
 	"main/models"
 	"main/repositories"
@@ -72,7 +71,6 @@ func Login(c *fiber.Ctx) error {
 
 	if err := bcrypt.CompareHashAndPassword(result.Password, []byte(data["password"])); err != nil {
 		c.Status(fiber.StatusBadRequest)
-		fmt.Println("error:", err)
 		return c.JSON(fiber.Map{
 			"message": "Incorrent password",
 		})
