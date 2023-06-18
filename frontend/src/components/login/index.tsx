@@ -35,8 +35,8 @@ export default function Login(props: {setName: (name:string) => void}) {
         <div className="wrapper fadeInDown">
             <div id="formContent">
                 <form onSubmit={handleSubmit}>
-                    <input type="text" id="email" className="fadeIn second" onChange={e => setEmail(e.target.value)} name="email" placeholder="email"/>
-                    <input type="text" id="password" className="fadeIn third" name="password" onChange={e => setPassword(e.target.value)} placeholder="Password"/>
+                    <input type="text" id="email" className="fadeIn second" onChange={e => setEmail(e.target.value)} name="email" placeholder="E-mail"/>
+                    <input type="password" id="password" className="fadeIn third" name="password" onChange={e => setPassword(e.target.value)} placeholder="Password"/>
                     <input type="submit" className="fadeIn fourth" value="Log In"/>
                 </form>
                 <div className="text-danger">
