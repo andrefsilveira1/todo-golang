@@ -8,4 +8,5 @@ type Data struct {
 	Completed   string    `json:"completed,omitempty"`
 	Description string    `json:"description,omitempty"`
 	CreatedAt   time.Time `json:"CreatedAt,omitempty"`
+	User_id     string    `json:"user_id,omitempty"`
 }
