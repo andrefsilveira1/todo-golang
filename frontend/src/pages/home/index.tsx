@@ -15,24 +15,24 @@ export interface Todo {
 export const ENDPOINT = "http://localhost:8000";
 
     
-export default function Home(props: {name: string}) {
+export default function Home(props: {name: string, id:string}) {
 
     const [reports, setReports] = useState([]);
     
     useEffect(() => {
-      axios.get(`${ENDPOINT}/api/todos`).then(res => {
+      axios.get(`${ENDPOINT}/api/data/${props.id}`).then(res => {
         setReports(res.data)
       }).catch(err => console.log("error: ", err))
     }), [reports];
     
     async function completeTodo(id: number) {
-      await axios.patch(`${ENDPOINT}/api/todos/${id}/completed`).then(res => {
+      await axios.put(`${ENDPOINT}/api/data/complete/${id}/`).then(res => {
         setReports(res.data)
       }).catch(err => console.log(err));
     }
   
     async function undoTodo(id: number) {
-      await axios.patch(`${ENDPOINT}/api/todos/${id}/uncompleted`).then(res => {
+      await axios.put(`${ENDPOINT}/api/data/undo/${id}/`).then(res => {
         setReports(res.data)
       }).catch(err => console.log("ERR:", err));
     }
@@ -62,7 +62,7 @@ export default function Home(props: {name: string}) {
                         </tbody>
                     </table> 
 
-                <AppendTodo mutate={mutate}/>
+                <AppendTodo mutate={mutate} id={props.id}/>
             </>
     )
 }

@@ -11,9 +11,9 @@ func Setup(app *fiber.App) {
 	app.Post("/api/login", controllers.Login)
 	app.Get("/api/user", controllers.User)
 	app.Post("/api/logout", controllers.Logout)
-	app.Get("api/data/", controllers.GetData)
+	app.Get("api/data/:id", controllers.GetData)
 	app.Post("/api/data/create", controllers.CreateData)
-	app.Put("/api/data/complete/:id", controllers.CompleteTask)
-	app.Put("/api/data/undo/:id", controllers.UndoTask)
+	app.Patch("/api/data/complete/:id", controllers.CompleteTask)
+	app.Patch("/api/data/undo/:id", controllers.UndoTask)
 
 }

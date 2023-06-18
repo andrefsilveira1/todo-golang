@@ -2,13 +2,14 @@ import { useState, SyntheticEvent } from "react";
 import { Button, Group, Modal } from "@mantine/core";
 import { ENDPOINT } from "../App";
 
-function AppendTodo() {
+function AppendTodo(props: {id:string}) {
     const [open, setOpen] = useState(false);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [completed, setCompleted] = useState("false");
 
     async function handleSubmit(e: SyntheticEvent) {
+        const user_id = (props.id).toString();
         e.preventDefault();
         const res = await fetch(`${ENDPOINT}/api/data/create`, {
             method: 'POST',
@@ -17,9 +18,9 @@ function AppendTodo() {
                 title,
                 description,
                 completed,
+                user_id
             })
         })
-        console.log("RECEIVED:", res)
 
     }
 
