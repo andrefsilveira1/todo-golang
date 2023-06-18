@@ -15,7 +15,7 @@ export interface Todo {
 export const ENDPOINT = "http://localhost:8000";
 
     
-export default function Home(props: {name: string}) {
+export default function Home(props: {name: string, id:string}) {
 
     const [reports, setReports] = useState([]);
     
@@ -62,7 +62,7 @@ export default function Home(props: {name: string}) {
                         </tbody>
                     </table> 
 
-                <AppendTodo mutate={mutate}/>
+                <AppendTodo mutate={mutate} id={props.id}/>
             </>
     )
 }

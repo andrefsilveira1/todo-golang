@@ -15,7 +15,7 @@ func NewRepository(db *sql.DB) *data {
 }
 
 func (d data) CreateData(data models.Data) (uint64, error) {
-	statement, err := d.db.Prepare("INSERT INTO data (title, description, completed) VALUES(?,?,?)")
+	statement, err := d.db.Prepare("INSERT INTO data (title, user_id, description, completed) VALUES(?,?,?,?)")
 	if err != nil {
 		return 0, err
 	}
@@ -26,7 +26,7 @@ func (d data) CreateData(data models.Data) (uint64, error) {
 		return 0, err
 	}
 
-	result, err := statement.Exec(data.Title, data.Description, completed)
+	result, err := statement.Exec(data.Title, data.User_id, data.Description, completed)
 	if err != nil {
 		return 0, err
 	}

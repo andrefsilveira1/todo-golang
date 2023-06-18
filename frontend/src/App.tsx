@@ -17,6 +17,7 @@ export interface Todo {
 function App() {
 
   const [name, setName] = useState('');
+  const [id, setId] = useState('');
   useEffect(() => {
     (
       async () => {
@@ -26,6 +27,7 @@ function App() {
       });
         const result = await res.json();
         setName(result.name);
+        setId(result.id);
       }
     )();
   });
@@ -38,7 +40,7 @@ function App() {
         <Routes>
           <Route path="/login" Component={() => <Login setName={setName}/>} />
           <Route path="/register" Component={Register} />
-          <Route path="/home" Component={() => <Home name={name}/>} />
+          <Route path="/home" Component={() => <Home name={name} id={id} />} />
         </Routes>
       </BrowserRouter>
     </>

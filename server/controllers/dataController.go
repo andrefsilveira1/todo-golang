@@ -20,8 +20,8 @@ func CreateData(c *fiber.Ctx) error {
 		Title:       body["title"],
 		Completed:   body["completed"],
 		Description: body["description"],
+		User_id:     body["user_id"],
 	}
-
 	db, erro := db.Connect()
 	if erro != nil {
 		return c.JSON(erro)
