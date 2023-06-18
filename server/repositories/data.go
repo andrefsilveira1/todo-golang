@@ -39,18 +39,18 @@ func (d data) CreateData(data models.Data) (uint64, error) {
 	return uint64(id), nil
 }
 
-func (repositories data) FindAll() ([]models.Data, error) {
-	lines, err := repositories.db.Query("SELECT * FROM data")
+func (repositories data) FindAll(id int) ([]models.Data, error) {
+	lines, err := repositories.db.Query("SELECT * FROM data WHERE user_id = ?", id)
 	if err != nil {
 		return nil, err
 	}
 	defer lines.Close()
-
 	var datas []models.Data
 	for lines.Next() {
 		var data models.Data
 		if err = lines.Scan(
 			&data.ID,
+			&data.User_id,
 			&data.Title,
 			&data.Description,
 			&data.Completed,
@@ -76,6 +76,7 @@ func (repositories data) CompleteTask(id int) (models.Data, error) {
 		if err = lines.Scan(
 			&data.ID,
 			&data.Title,
+			&data.User_id,
 			&data.Description,
 			&data.Completed,
 			&data.CreatedAt,

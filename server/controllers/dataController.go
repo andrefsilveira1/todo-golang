@@ -38,6 +38,11 @@ func CreateData(c *fiber.Ctx) error {
 }
 
 func GetData(c *fiber.Ctx) error {
+	paramId := c.Params("id")
+	id, err := strconv.Atoi(paramId)
+	if err != nil {
+		return err
+	}
 	db, erro := db.Connect()
 	if erro != nil {
 		return c.JSON(erro)
@@ -45,7 +50,7 @@ func GetData(c *fiber.Ctx) error {
 	defer db.Close()
 
 	repositorie := repositories.NewRepository(db)
-	result, err := repositorie.FindAll()
+	result, err := repositorie.FindAll(id)
 	if err != nil {
 		return c.JSON(err)
 	}
@@ -71,7 +76,6 @@ func CompleteTask(c *fiber.Ctx) error {
 	if err != nil {
 		return c.JSON(err)
 	}
-
 	return c.JSON(result)
 
 }
