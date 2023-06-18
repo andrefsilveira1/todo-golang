@@ -15,5 +15,6 @@ func Setup(app *fiber.App) {
 	app.Post("/api/data/create", controllers.CreateData)
 	app.Patch("/api/data/complete/:id", controllers.CompleteTask)
 	app.Patch("/api/data/undo/:id", controllers.UndoTask)
+	app.Delete("/api/data/delete/:id", controllers.DeleteTask)
 
 }

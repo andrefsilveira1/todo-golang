@@ -102,3 +102,23 @@ func UndoTask(c *fiber.Ctx) error {
 	return c.JSON(result)
 
 }
+
+func DeleteTask(c *fiber.Ctx) error {
+	paramId := c.Params("id")
+	id, err := strconv.Atoi(paramId)
+	if err != nil {
+		return err
+	}
+	db, erro := db.Connect()
+	if erro != nil {
+		return c.JSON(erro)
+	}
+	defer db.Close()
+	repositorie := repositories.NewRepository(db)
+	if err = repositorie.DeleteTask(id); err != nil {
+		return c.JSON(err)
+	}
+
+	return c.JSON("Task deleted!")
+
+}

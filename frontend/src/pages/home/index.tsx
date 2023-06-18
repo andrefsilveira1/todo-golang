@@ -3,7 +3,7 @@ import { mutate }  from 'swr';
 import AppendTodo from '../../components/AppendTodo';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { CheckCircleFillIcon, CircleIcon } from '@primer/octicons-react';
+import { CheckCircleFillIcon, CircleIcon, TrashIcon } from '@primer/octicons-react';
 
 export interface Todo {
   id: number
@@ -44,6 +44,12 @@ export default function Home(props: {name: string, id:string}) {
       return response;
     }
 
+    async function removeData(id: number) {
+      await axios.delete(`${ENDPOINT}/api/data/delete/${id}`).catch(err => console.log("ERR:", err));
+      const newData = await getData();
+      setReports(newData);
+    }
+
 
     return (
             <>
@@ -55,6 +61,7 @@ export default function Home(props: {name: string, id:string}) {
                         <th>Title</th>
                         <th>Description</th>
                         <th>Completed</th>
+                        <th>Remove</th>
                     </tr>
                         </thead>
                         <tbody>
@@ -65,7 +72,9 @@ export default function Home(props: {name: string, id:string}) {
                             <td>{todo.title}</td>
                             <td>{todo.description}</td>
                             {todo.completed == true ? (<td onClick={() => undoTodo(todo.id)}><CheckCircleFillIcon/></td>) : (<td onClick={() => completeTodo(todo.id)}> <CircleIcon/></td>)}
+                            <td onClick={() => removeData(todo.id)}><TrashIcon size={16} /></td>
                             </tr>
+                            
                         )
                         })}      
                         </tbody>

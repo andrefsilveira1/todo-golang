@@ -111,3 +111,13 @@ func (repositories data) UndoTask(id int) (models.Data, error) {
 
 	return data, nil
 }
+
+func (repositories data) DeleteTask(id int) error {
+	lines, err := repositories.db.Query("DELETE FROM data WHERE id = ?", id)
+	if err != nil {
+		return err
+	}
+	defer lines.Close()
+
+	return nil
+}
