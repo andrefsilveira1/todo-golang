@@ -1,5 +1,4 @@
 import './index.css'
-import { mutate }  from 'swr';
 import AppendTodo from '../../components/AppendTodo';
 import { useEffect, useState } from 'react';
 import axios from 'axios';

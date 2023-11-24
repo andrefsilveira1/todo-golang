@@ -10,6 +10,7 @@ function AppendTodo(props: {id:string}) {
 
     async function handleSubmit(e: SyntheticEvent) {
         const user_id = (props.id).toString();
+        setCompleted("false");
         e.preventDefault();
         const res = await fetch(`${ENDPOINT}/api/data/create`, {
             method: 'POST',
@@ -21,6 +22,7 @@ function AppendTodo(props: {id:string}) {
                 user_id
             })
         })
+        console.log("RES:", res)
 
     }
 
